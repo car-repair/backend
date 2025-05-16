@@ -18,7 +18,8 @@ import { ScheduleModule } from './schedule/schedule.module';
 		BookingModule,
 		ConfigModule.forRoot({
 			isGlobal: true,
-			load: [configuration]
+			load: [configuration],
+			envFilePath: '.env',
 		}),
 		DatabaseModule,
 		AdminModule,

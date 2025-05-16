@@ -10,6 +10,7 @@ FROM node:${NODE_VERSION}-slim
 WORKDIR /home/node/app
 COPY --from=builder /home/node/app/dist ./dist
 COPY --from=builder /home/node/app/package*.json ./
+COPY .env .
 RUN npm ci --omit=dev
 EXPOSE 3000
 CMD ["npm", "run", "start:prod"]
