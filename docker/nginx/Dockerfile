@@ -1,8 +1,21 @@
+FROM node:22.11.0-slim AS frontend-builder
+WORKDIR /app
+COPY frontend/package*.json ./
+RUN ls -la
+RUN npm ci
+COPY frontend .
+RUN npm run build
+
+FROM node:22.11.0-slim AS admin-builder
+WORKDIR /app
+COPY admin/package*.json ./
+
+RUN npm ci
+COPY admin .
+RUN npm run build
+
 FROM nginx:alpine
-RUN apk add --no-cache certbot certbot-nginx
-COPY nginx.conf /etc/nginx/nginx.conf
-COPY --from=car-repair-frontend /usr/share/nginx/html /usr/share/nginx/html/frontend
-COPY --from=car-repair-admin /usr/share/nginx/html/admin /usr/share/nginx/html/admin
-EXPOSE 80
-EXPOSE 443
-CMD ["nginx", "-g", "daemon off;"]
+COPY --from=frontend-builder /app/dist /usr/share/nginx/html/frontend/dist
+COPY --from=admin-builder /app/dist /usr/share/nginx/html/admin/dist
+RUN chmod -R 755 /usr/share/nginx/html
+COPY backend/docker/nginx/nginx.conf /etc/nginx/nginx.conf

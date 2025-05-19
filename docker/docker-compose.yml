@@ -5,10 +5,28 @@ networks:
     driver: bridge
 
 services:
-  app:
+  db:
+    container_name: car-repair-postgres
     build:
-      context: ../
-      dockerfile: docker/app/Dockerfile
+      context: ../../
+      dockerfile: backend/docker/db/Dockerfile
+      args:
+        POSTGRES_VERSION: ${POSTGRES_VERSION:-16}
+    restart: unless-stopped
+    volumes:
+      - car-repair-pg-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    networks:
+      - car-repair-network
+
+  app:
+    container_name: docker-app-1
+    build:
+      context: ../../
+      dockerfile: backend/docker/app/Dockerfile
     environment:
       - NODE_OPTIONS=--max-old-space-size=8192
       - DB_HOST=db
@@ -27,51 +45,18 @@ services:
       - db
     restart: unless-stopped
 
-  db:
-    container_name: car-repair-postgres
-    build:
-      context: ../
-      dockerfile: docker/db/Dockerfile
-      args:
-        POSTGRES_VERSION: ${POSTGRES_VERSION:-16}
-    restart: unless-stopped
-    volumes:
-      - car-repair-pg-data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
-    networks:
-      - car-repair-network
-
-  frontend:
-    image: car-repair-frontend
-    build:
-      context: ../../frontend
-      dockerfile: docker/nginx/Dockerfile
-    networks:
-      - car-repair-network
-    restart: unless-stopped
-
-  admin:
-    image: car-repair-admin
-    build:
-      context: ../../admin
-      dockerfile: docker/nginx/Dockerfile
-    networks:
-      - car-repair-network
-    restart: unless-stopped
-
   nginx:
+    container_name: docker-nginx-1
     build:
-      context: ./nginx
-      dockerfile: Dockerfile
+      context: ../../
+      dockerfile: backend/docker/nginx/Dockerfile
+      args:
+        FRONTEND_CONTEXT: frontend
+        ADMIN_CONTEXT: admin
     ports:
       - "80:80"
       - "443:443"
     depends_on:
-      - frontend
-      - admin
       - app
     networks:
       - car-repair-network
