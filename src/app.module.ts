@@ -11,6 +11,7 @@ import { DatabaseModule } from "./database/database.module";
 import { AdminModule } from './admin/admin.module';
 import { CarModule } from './car/car.module';
 import { ScheduleModule } from './schedule/schedule.module';
+import { TelegramModule } from "./telegram/telegram.module";
 
 @Module({
 	imports: [
@@ -26,6 +27,7 @@ import { ScheduleModule } from './schedule/schedule.module';
 		CarModule,
 		ScheduleModule,
 		AdminModule,
+		TelegramModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],
