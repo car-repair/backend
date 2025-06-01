@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppConfig } from '../config/types';
-import { Service } from '../service/entities/service.entity';
+//import { Service } from '../service/entities/service.entity';
 
 @Module({
     imports: [
@@ -12,8 +12,10 @@ import { Service } from '../service/entities/service.entity';
                 const typeormConfig = configService.get('typeorm');
                 return {
                     ...typeormConfig,
-                    entities: [Service],
+                    //entities: [Service],
                     autoLoadEntities: true,
+                    migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
+                    seeds: [__dirname + '/seeds/**/*{.ts,.js}'],
                 };
             },
             inject: [ConfigService],

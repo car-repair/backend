@@ -8,6 +8,7 @@ import { Service } from "src/service/entities/service.entity";
 import { Car } from "src/car/entities/car.entity";
 import { BOOKING_DURATION_HOURS, ScheduleService } from "src/schedule/schedule.service";
 import { DateTime } from "luxon";
+import { TelegramService } from "src/telegram/telegram.service";
 
 @Injectable()
 export class BookingService {
@@ -19,7 +20,8 @@ export class BookingService {
 		@InjectRepository(Car)
 		private carRepo: Repository<Car>,
 		@Inject(ScheduleService)
-		private readonly scheduleService: ScheduleService
+		private readonly scheduleService: ScheduleService,
+		private readonly tgService: TelegramService,
 
 	) { }
 	async create(dto: CreateBookingDto): Promise<Booking> {
@@ -38,7 +40,10 @@ export class BookingService {
 
 		const endsAt = startsAt.plus({ hours: BOOKING_DURATION_HOURS });
 
-		const car = await this.carRepo.findOneBy({ id: dto.carId })
+		const car = await this.carRepo.findOne({
+            where: { id: dto.carId },
+            relations: ['brand', 'model'],
+        });
 
 		if (!car) {
 			throw new BadRequestException(`Car with ${dto.carId} not found`)
@@ -55,7 +60,11 @@ export class BookingService {
 			comment: dto.comment,
 		});
 
-		return this.bookingRepo.save(booking);
+		const saved = await this.bookingRepo.save(booking);
+
+		await this.tgService.sendBookingNotification(saved);
+
+		return saved;
 	}
 
 	async findAll(): Promise<Booking[]> {
