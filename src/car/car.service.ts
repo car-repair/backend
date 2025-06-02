@@ -12,7 +12,8 @@ export class CarService {
     private repo: Repository<Car>
   ) { }
   async create(dto: CreateCarDto): Promise<Car> {
-    return this.repo.create(dto)
+    const entity = new Car(dto)
+    return this.repo.save(entity)
   }
 
   async findAll(): Promise<Car[]> {
