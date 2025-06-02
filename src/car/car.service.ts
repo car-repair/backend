@@ -16,11 +16,16 @@ export class CarService {
   }
 
   async findAll(): Promise<Car[]> {
-    return this.repo.find()
+    return this.repo.find(
+      {relations: ['brand', 'model'],}
+    )
   }
 
   async findOne(id: string): Promise<Car | null> {
-    const found = await this.repo.findOneBy({ id });
+    const found = await this.repo.findOne({
+      where: { id: id },
+      relations: ['brand', 'model'],
+    });
     if (!found) throw new NotFoundException(`Car with id ${id} not found`);
     return found;
   }
