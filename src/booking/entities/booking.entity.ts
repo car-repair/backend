@@ -1,5 +1,5 @@
-import { Car } from "src/car/entities/car.entity";
-import { Service } from "src/service/entities/service.entity";
+import { Car } from "../../car/entities/car.entity";
+import { Service } from "../../service/entities/service.entity";
 import {
 	Entity,
 	ManyToMany,

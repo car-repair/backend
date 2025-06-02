@@ -1,7 +1,7 @@
 import { Seeder } from 'typeorm-extension';
 import { DataSource } from 'typeorm';
-import { Car } from 'src/car/entities/car.entity';
-const carsRaw = require('./cars/cars.json');
+import { Car } from '../../car/entities/car.entity';
+//const carsRaw = require('../cars/cars.json');
 
 export default class CarSeeder implements Seeder {
     public async run(
@@ -16,11 +16,11 @@ export default class CarSeeder implements Seeder {
 
         const cars: Partial<Car>[] = [];
 
-        for (const car in carsRaw) {
-            cars.push({
+        // for (const car in carsRaw) {
+        //     cars.push({
                 
-            })
-        }
+        //     })
+        // }
 
         await carRepository.save(cars);
         console.log('Car seed added');
