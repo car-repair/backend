@@ -1,7 +1,7 @@
 import { Seeder } from 'typeorm-extension';
 import { DataSource } from 'typeorm';
 import { Schedule } from '../../schedule/entities/schedule.entity';
-import { DaysOfWeek } from 'src/utils/types';
+import { DaysOfWeek } from '../../utils/types';
 
 export default class ScheduleSeeder implements Seeder {
     public async run(

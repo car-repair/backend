@@ -20,7 +20,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "db:create": "ts-node ./node_modules/typeorm-extension/bin/cli.cjs db:create",
     "db:drop": "ts-node ./node_modules/typeorm-extension/bin/cli.cjs db:drop",
-    "seed:run": "ts-node -r tsconfig-paths/register ./node_modules/typeorm-extension/bin/cli.cjs seed:run -d ./src/database/data-source.ts",
+    "seed:run": "ts-node ./node_modules/typeorm-extension/bin/cli.mjs seed:run",
     "seed:create": "ts-node -r tsconfig-paths/register ./node_modules/typeorm-extension/bin/cli.cjs seed:create"
   },
   "dependencies": {
@@ -70,7 +70,6 @@
     "ts-jest": "^29.2.5",
     "ts-loader": "^9.5.2",
     "ts-node": "^10.9.2",
-    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.20.0"
   },
