@@ -7,7 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Schedule } from './entities/schedule.entity';
 import { ScheduleException } from './entities/schedule-exception.entity';
-import { Booking } from 'src/booking/entities/booking.entity';
+import { Booking } from '../booking/entities/booking.entity';
 import { DateTime } from 'luxon';
 
 export interface ITimeSlot {

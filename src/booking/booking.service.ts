@@ -4,11 +4,11 @@ import { UpdateBookingDto } from "./dto/update-booking.dto";
 import { Booking } from "./entities/booking.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { In, Repository } from "typeorm";
-import { Service } from "src/service/entities/service.entity";
-import { Car } from "src/car/entities/car.entity";
-import { BOOKING_DURATION_HOURS, ScheduleService } from "src/schedule/schedule.service";
+import { Service } from "../service/entities/service.entity";
+import { Car } from "../car/entities/car.entity";
+import { BOOKING_DURATION_HOURS, ScheduleService } from "../schedule/schedule.service";
 import { DateTime } from "luxon";
-import { TelegramService } from "src/telegram/telegram.service";
+import { TelegramService } from "../telegram/telegram.service";
 
 @Injectable()
 export class BookingService {

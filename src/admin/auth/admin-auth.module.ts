@@ -3,7 +3,7 @@ import { AdminAuthService } from './admin-auth.service';
 import { AdminAuthController } from './admin-auth.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { JwtStrategy } from './jwt.strategy';
+import { JwtAdminStrategy } from './jwt.admin.strategy';
 
 @Module({
     imports: [
@@ -11,12 +11,12 @@ import { JwtStrategy } from './jwt.strategy';
             imports: [ConfigModule],
             useFactory: async (configService: ConfigService) => ({
                 secret: configService.get<string>('JWT_SECRET'),
-                signOptions: { expiresIn: '1h' }, // Токен будет действителен 1 час
+                signOptions: { expiresIn: '72h' },
             }),
             inject: [ConfigService],
         }),
     ],
-    providers: [AdminAuthService, JwtStrategy],
+    providers: [AdminAuthService, JwtAdminStrategy],
     controllers: [AdminAuthController],
 })
 export class AdminAuthModule { }
