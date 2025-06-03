@@ -1,4 +1,4 @@
-import { DaysOfWeek } from '../../utils/types';
+import { DaysOfWeek } from '../../common/utils/types';
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'schedule' })

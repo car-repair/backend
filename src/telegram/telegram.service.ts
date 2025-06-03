@@ -49,7 +49,7 @@ export class TelegramService {
             });
             //this.logger.log(`Telegram notification sent for booking ID: ${booking.id}`);
         } catch (error) {
-            this.logger.error('Failed to send Telegram notification:', error.message);
+            this.logger.error('Failed to send Telegram notification:', error);
         }
     }
 }

@@ -2,8 +2,8 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { AdminService } from './admin.service';
 import { CreateAdminDto } from './dto/create-admin.dto';
 import { UpdateAdminDto } from './dto/update-admin.dto';
-import { BookingService } from 'src/booking/booking.service';
-import { ServiceService } from 'src/service/service.service';
+import { BookingService } from '../booking/booking.service';
+import { ServiceService } from '../service/service.service';
 
 @Controller('admin')
 export class AdminController {

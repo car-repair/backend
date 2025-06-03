@@ -28,9 +28,10 @@ export class AdminAuthService {
         }
 
         // Генерируем JWT-токен
-        const payload = { role: 'admin' };
+        const payload = { role: 'admin', login: this.adminLogin };
+        console.log(payload)
         const accessToken = this.jwtService.sign(payload);
 
-        return { accessToken };
+        return { accessToken: accessToken };
     }
 }

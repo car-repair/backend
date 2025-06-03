@@ -1,5 +1,5 @@
 import { IsEnum, IsNotEmpty, IsOptional, IsString, Matches } from 'class-validator';
-import { DaysOfWeek } from 'src/utils/types';
+import { DaysOfWeek } from '../../common/utils/types';
 
 export class CreateScheduleDto {
     @IsEnum(DaysOfWeek)
