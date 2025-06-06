@@ -29,15 +29,15 @@ export class TelegramService {
 
         const startsAt = DateTime.fromJSDate(booking.startsAt, { zone: 'Asia/Yekaterinburg' }).toFormat('dd.MM.yyyy HH:mm');
         const services = booking.services.map((s) => s.name).join(', ');
-        const message = `
-            <b>Новое бронирование</b>
-            <b>Клиент:</b> ${booking.firstname} ${booking.lastname}
-            <b>Телефон:</b> ${booking.phone}
-            <b>Авто:</b> ${booking.car.brand.name} ${booking.car.model.name}
-            <b>Услуги:</b> ${services}
-            <b>Начало:</b> ${startsAt}
-            <b>Комментарий:</b> ${booking.comment || 'Нет'}
-            `.trim();
+        const message = [
+            `<b>Новое бронирование</b>`,
+            `<b>Клиент:</b> ${booking.firstname} ${booking.lastname}`,
+            `<b>Телефон:</b> ${booking.phone}`,
+            `<b>Авто:</b> ${booking.car.brand.name} ${booking.car.model.name} ${booking.car.licensePlate}`,
+            `<b>Услуги:</b> ${services}`,
+            `<b>Начало:</b> ${startsAt}`,
+            `<b>Комментарий:</b> ${booking.comment || 'Нет'}`,
+        ].join('\n');
 
         try {
             await axios.get(this.telegramApiUrl, {
