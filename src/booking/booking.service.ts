@@ -67,12 +67,41 @@ export class BookingService {
 		return saved;
 	}
 
-	async findAll(): Promise<Booking[]> {
-		return this.bookingRepo.find()
-	}
+	async findAll(
+		onlyActive?: boolean,
+		week?: string
+	  ): Promise<Booking[]> {
+		const bookings = await this.bookingRepo.find({
+		  relations: ['car', 'services'],
+		});
+	  
+		// Фильтрация на основе параметров
+		return bookings.filter((booking) => {
+		  const startsAt = DateTime.fromJSDate(booking.startsAt, { zone: 'Asia/Yekaterinburg' });
+		  const currentTime = DateTime.now().setZone('Asia/Yekaterinburg');
+	  
+		  // Фильтр "Только актуальные"
+		  if (onlyActive && startsAt < currentTime) {
+			return false;
+		  }
+	  
+		  // Фильтр по неделе
+		  if (week) {
+			const [startWeek, endWeek] = week.split('_').map((date) =>
+			  DateTime.fromISO(date, { zone: 'Asia/Yekaterinburg' })
+			);
+			return startsAt >= startWeek && startsAt <= endWeek;
+		  }
+	  
+		  return true;
+		});
+	  }
 
 	async findOne(id: string): Promise<Booking> {
-		const booking = await this.bookingRepo.findOneBy({ id: id })
+		const booking = await this.bookingRepo.findOne({ 
+			where: { id: id },
+			relations: ['car', 'car.brand', 'car.model', 'services']
+		})
 		if (!booking) {
 			throw new BadRequestException(`Booking with id ${id} not found`)
 		}

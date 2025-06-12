@@ -107,59 +107,59 @@ export class ScheduleService {
     if (!targetDate.isValid) {
       throw new BadRequestException(`Invalid date format: ${date}. Expected format: YYYY-MM-DD`);
     }
-
+  
     try {
       // Проверяем, есть ли исключение для этой даты
       const exception = await this.scheduleExceptionRepo.findOne({
         where: { date: targetDate.toISODate() },
       });
-
+  
       if (exception) {
         // Если есть исключение и день нерабочий (startTime и endTime = null), возвращаем пустой массив
         if (!exception.startTime || !exception.endTime) {
           return [];
         }
-
+  
         // Используем время из исключения
         const startHour = parseInt(exception.startTime.split(':')[0], 10);
         const endHour = parseInt(exception.endTime.split(':')[0], 10);
         return this.generateFreeSlots(targetDate, startHour, endHour);
       }
-
+  
       // Если исключения нет, используем расписание для дня недели
       const dayOfWeek = targetDate.weekday; // 1 = Monday, ..., 7 = Sunday
       const dayOfWeekString = this.mapWeekdayToString(dayOfWeek);
-
+  
       const schedule = await this.scheduleRepo.findOne({
         where: { dayOfWeek: dayOfWeekString },
       });
-
+  
       if (!schedule || schedule.isDayOff || !schedule.startTime || !schedule.endTime) {
         // Если расписания нет, день выходной или время не указано, возвращаем пустой массив
         return [];
       }
-
+  
       const startHour = parseInt(schedule.startTime.split(':')[0], 10);
       const endHour = parseInt(schedule.endTime.split(':')[0], 10);
       return this.generateFreeSlots(targetDate, startHour, endHour);
-
+  
     } catch (e) {
-      console.error(`findFreeSlots error: ${e.message}`);
       throw new BadRequestException('Invalid params');
     }
   }
-
+  
   private async generateFreeSlots(targetDate: DateTime, startHour: number, endHour: number): Promise<ITimeSlot[]> {
     const startOfDay = targetDate.startOf('day');
     const endOfDay = targetDate.endOf('day');
-
+    const currentTime = DateTime.now().setZone('Asia/Yekaterinburg'); // Текущее время в Екатеринбурге
+  
     // Выборка бронирований за день
     const bookings = await this.bookingRepo
       .createQueryBuilder('booking')
       .where('booking.startsAt >= :start', { start: startOfDay.toISO() })
       .andWhere('booking.startsAt <= :end', { end: endOfDay.toISO() })
       .getMany();
-
+  
     // Генерируем все возможные слоты
     const allSlots: ITimeSlot[] = [];
     let currentHour = startHour;
@@ -172,7 +172,7 @@ export class ScheduleService {
       });
       currentHour += BOOKING_DURATION_HOURS;
     }
-
+  
     // Определяем занятые слоты
     const bookedSlots: string[] = [];
     bookings.forEach((booking) => {
@@ -188,14 +188,24 @@ export class ScheduleService {
         current = current.plus({ hours: BOOKING_DURATION_HOURS });
       }
     });
-
+  
     // Фильтруем свободные слоты
-    const freeSlots = allSlots.filter(
-      (slot) => !bookedSlots.includes(slot.startsAt),
-    );
+    // Проверяем, что слот еще не начался (только для текущего дня)
+    const freeSlots = allSlots.filter((slot) => {
+      const slotStartTime = targetDate.set({
+        hour: parseInt(slot.startsAt.split(':')[0], 10),
+        minute: parseInt(slot.startsAt.split(':')[1], 10),
+      });
+      const isToday = targetDate.hasSame(currentTime, 'day');
+      return (
+        !bookedSlots.includes(slot.startsAt) &&
+        (!isToday || slotStartTime >= currentTime)
+      );
+    });
+  
     return freeSlots;
   }
-
+  
   private mapWeekdayToString(weekday: number): string {
     const daysMap: { [key: number]: string } = {
       1: 'Monday',
