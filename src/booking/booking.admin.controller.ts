@@ -16,8 +16,12 @@ export class BookingAdminController {
   }
 
   @Get(AdminRoutes.Booking.LIST)
-  findAll() {
-    return this.bookingService.findAll();
+  async findAll(
+    @Query('onlyActive') onlyActive?: string,
+    @Query('week') week?: string,
+  ) {
+    const isOnlyActive = onlyActive === 'true';
+    return this.bookingService.findAll(isOnlyActive, week);
   }
 
   @Get(AdminRoutes.Booking.SLOTS)

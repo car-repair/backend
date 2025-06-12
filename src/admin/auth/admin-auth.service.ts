@@ -27,9 +27,7 @@ export class AdminAuthService {
             throw new UnauthorizedException('Неверное имя пользователя или пароль');
         }
 
-        // Генерируем JWT-токен
         const payload = { role: 'admin', login: this.adminLogin };
-        console.log(payload)
         const accessToken = this.jwtService.sign(payload);
 
         return { accessToken: accessToken };
