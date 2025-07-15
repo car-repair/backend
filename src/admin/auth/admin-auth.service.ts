@@ -32,4 +32,16 @@ export class AdminAuthService {
 
         return { accessToken: accessToken };
     }
+
+    async check(token: string): Promise<{ isAuthenticated: boolean }> {
+        try {
+            const payload = await this.jwtService.verifyAsync(token);
+            if (payload.role === 'admin' && payload.login === this.adminLogin) {
+                return { isAuthenticated: true };
+            }
+            throw new UnauthorizedException('Недействительный токен');
+        } catch (error) {
+            throw new UnauthorizedException('Недействительный или истёкший токен');
+        }
+    }
 }
